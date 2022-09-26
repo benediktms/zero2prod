@@ -16,6 +16,7 @@ path = "src/main.rs"
 actix-web = "4.1.0"
 serde = { version = "1", features = ["derive"] }
 tokio = { version = "1.19.2", features = ["macros", "rt-multi-thread"] }
+config = "0.13"
 
 [dependencies.sqlx]
 version = "0.6.2"
