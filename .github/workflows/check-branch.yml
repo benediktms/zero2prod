@@ -69,9 +69,7 @@ jobs:
       - name: Migrate database
         run: |
           sudo apt-get install libpq-dev -y
-          SKIP_DOCKER=true ./scripts/init_db.sh
-        env:
-          DB_PASSWORD: postgres
+          SKIP_DOCKER=true PGPASSWORD=postgres ./scripts/init_db.sh
 
       - name: Run cargo test
         uses: actions-rs/cargo@v1
