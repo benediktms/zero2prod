@@ -79,7 +79,6 @@ jobs:
   fmt:
     name: Rustfmt
     runs-on: ubuntu-latest
-    steps:
     services:
       postgres:
         image: postgres:14
