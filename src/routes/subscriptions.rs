@@ -12,7 +12,6 @@ pub struct FormData {
 #[tracing::instrument(
     skip(data, pool),
     fields(
-        request_id = %Uuid::new_v4(),
         subscriber_email = %data.email,
         subscriber_name = %data.name
     )
