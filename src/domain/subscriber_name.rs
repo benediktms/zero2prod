@@ -1,10 +1,5 @@
 use unicode_segmentation::UnicodeSegmentation;
 
-pub struct NewSubscriber {
-    pub email: String,
-    pub name: SubscriberName,
-}
-
 #[derive(Debug)]
 pub struct SubscriberName(String);
 
@@ -17,7 +12,7 @@ impl SubscriberName {
         let contains_forbidden_characters = name.chars().any(|c| forbidden_characters.contains(&c));
 
         if is_empty_or_whitespace || is_too_long || contains_forbidden_characters {
-            panic!("{} is not a valid subscriber name.", name)
+            Err(format!("{} is not a valid subscriber name.", name))
         } else {
             Ok(Self(name))
         }
