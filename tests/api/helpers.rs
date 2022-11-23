@@ -55,7 +55,8 @@ pub async fn spawn_app() -> TestApp {
 
     let configuration = {
         let mut c = get_config().expect("Failed to read configuration");
-        c.database.database_name = Uuid::new_v4().to_string();
+        // c.database.port = 5433;
+        c.database.database_name = format!("newsletter-test-{}", Uuid::new_v4().to_string());
         c.application.port = 0;
 
         c
@@ -67,7 +68,7 @@ pub async fn spawn_app() -> TestApp {
         .await
         .expect("Failed to build application");
 
-    let address = format!("127.0.0.1:{}", application.port());
+    let address = format!("http://127.0.0.1:{}", application.port());
 
     let _ = tokio::spawn(application.run_until_stopped());
 
