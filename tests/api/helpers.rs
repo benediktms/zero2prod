@@ -28,6 +28,18 @@ pub struct TestApp {
     pub db_pool: PgPool,
 }
 
+impl TestApp {
+    pub async fn post_subscriptions(&self, body: String) -> reqwest::Response {
+        reqwest::Client::new()
+            .post(&format!("{}/subscriptions", &self.address))
+            .header("Content-Type", "application/x-www-form-urlencoded")
+            .body(body)
+            .send()
+            .await
+            .expect("Failed to execute request.")
+    }
+}
+
 async fn configure_database(config: &DatabaseSettings) -> PgPool {
     let mut connection = PgConnection::connect_with(&config.without_db())
         .await
@@ -55,7 +67,7 @@ pub async fn spawn_app() -> TestApp {
 
     let configuration = {
         let mut c = get_config().expect("Failed to read configuration");
-        // c.database.port = 5433;
+        c.database.port = 5433;
         c.database.database_name = format!("newsletter-test-{}", Uuid::new_v4().to_string());
         c.application.port = 0;
 
