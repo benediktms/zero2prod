@@ -7,6 +7,10 @@ use sqlx::{
 
 use crate::domain::SubscriberEmail;
 
+// Apply the changes to DigitalOcean every time configuration gets added
+// doctl apps list --format ID
+// doctl apps update $APP_ID --spec spec.yaml.
+
 #[derive(serde::Deserialize, Clone)]
 pub struct Settings {
     pub database: DatabaseSettings,
@@ -27,6 +31,7 @@ pub struct ApplicationSettings {
     #[serde(deserialize_with = "deserialize_number_from_string")]
     pub port: u16,
     pub host: String,
+    pub base_url: String,
 }
 
 #[derive(serde::Deserialize, Clone)]
