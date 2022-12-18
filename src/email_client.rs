@@ -33,9 +33,9 @@ impl EmailClient {
         let body = SendEmailRequest {
             from: self.sender.as_ref(),
             to: recipient.as_ref(),
-            subject: subject,
-            html_content: html_content,
-            text_content: text_content,
+            subject,
+            html_content,
+            text_content,
         };
 
         self.http_client

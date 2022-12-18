@@ -33,7 +33,7 @@ async fn confirmations_without_token_are_rejected_with_a_400() {
         links[0].as_str().to_owned()
     };
 
-    let raw_confirmation_link = &get_link(&body["HtmlContent"].as_str().unwrap());
+    let raw_confirmation_link = &get_link(body["HtmlContent"].as_str().unwrap());
     let confirmation_link = Url::parse(raw_confirmation_link).unwrap();
 
     assert_eq!(confirmation_link.host_str().unwrap(), "127.0.0.1");
@@ -59,7 +59,7 @@ async fn the_link_returned_by_subscribe_returns_a_200_if_called() {
     app.post_subscriptions(body.into()).await;
 
     let email_request = &app.email_server.received_requests().await.unwrap()[0];
-    let confirmation_links = app.get_confirmation_link(&email_request);
+    let confirmation_links = app.get_confirmation_link(email_request);
     let response = reqwest::get(confirmation_links.html_link).await.unwrap();
 
     assert_eq!(response.status().as_u16(), 200);
@@ -78,7 +78,7 @@ async fn clicking_on_the_confirmation_link_confirms_a_subscriber() {
 
     app.post_subscriptions(body.into()).await;
     let email_request = &app.email_server.received_requests().await.unwrap()[0];
-    let confirmation_links = app.get_confirmation_link(&email_request);
+    let confirmation_links = app.get_confirmation_link(email_request);
 
     reqwest::get(confirmation_links.html_link)
         .await

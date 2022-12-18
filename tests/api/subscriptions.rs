@@ -61,8 +61,7 @@ async fn subscribe_returns_a_400_when_data_is_missing() {
         assert_eq!(
             400,
             response.status().as_u16(),
-            "The API did not fail with 400 Bad Request when the payload was {}.",
-            error_message
+            "The API did not fail with 400 Bad Request when the payload was {error_message}."
         );
     }
 }
@@ -82,8 +81,7 @@ async fn subscribe_returns_a_400_when_fields_are_present_but_invalid() {
         assert_eq!(
             400,
             response.status().as_u16(),
-            "The API did not return a 400 Bad Request when the payload was {}",
-            description
+            "The API did not return a 400 Bad Request when the payload was {description}"
         )
     }
 }
@@ -118,7 +116,7 @@ async fn subscribe_sends_a_confirmation_email_with_a_link() {
 
     let email_request = &app.email_server.received_requests().await.unwrap()[0];
 
-    let confirmation_links = app.get_confirmation_link(&email_request);
+    let confirmation_links = app.get_confirmation_link(email_request);
 
     assert_eq!(confirmation_links.html_link, confirmation_links.text_link);
 }

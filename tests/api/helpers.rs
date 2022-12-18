@@ -68,8 +68,8 @@ impl TestApp {
             confirmation_link
         };
 
-        let html = get_link(&body["HtmlContent"].as_str().unwrap());
-        let text = get_link(&body["TextContent"].as_str().unwrap());
+        let html = get_link(body["HtmlContent"].as_str().unwrap());
+        let text = get_link(body["TextContent"].as_str().unwrap());
 
         ConfirmationLinks {
             html_link: html,
@@ -108,7 +108,7 @@ pub async fn spawn_app() -> TestApp {
     let configuration = {
         let mut c = get_config().expect("Failed to read configuration");
         c.database.port = 5433;
-        c.database.database_name = format!("newsletter-test-{}", Uuid::new_v4().to_string());
+        c.database.database_name = format!("newsletter-test-{}", Uuid::new_v4());
         c.application.port = 0;
         c.email_client.base_url = email_server.uri();
 
@@ -123,7 +123,7 @@ pub async fn spawn_app() -> TestApp {
 
     let application_port = application.port();
 
-    let address = format!("http://127.0.0.1:{}", application_port);
+    let address = format!("http://127.0.0.1:{application_port}");
 
     let _ = tokio::spawn(application.run_until_stopped());
 

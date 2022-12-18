@@ -92,7 +92,7 @@ pub fn get_config() -> Result<Settings, config::ConfigError> {
     let settings = config::Config::builder()
         .add_source(config::File::from(config_directory.join("base.yaml")))
         .add_source(config::File::from(
-            config_directory.join(&environment_filename),
+            config_directory.join(environment_filename),
         ))
         .add_source(
             // e.g. APP_APPLICATION__PORT=3001 -> Settings.application.port
@@ -127,9 +127,8 @@ impl TryFrom<String> for Environment {
             "development" => Ok(Self::Development),
             "production" => Ok(Self::Production),
             other => Err(format!(
-                "{} is not a supported environment. \
-                User either 'development' or 'production'",
-                other
+                "{other} is not a supported environment. \
+                User either 'development' or 'production'"
             )),
         }
     }
