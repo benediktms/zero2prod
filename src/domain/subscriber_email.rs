@@ -1,6 +1,6 @@
 use validator::validate_email;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct SubscriberEmail(String);
 
 impl SubscriberEmail {
@@ -8,7 +8,7 @@ impl SubscriberEmail {
         if validate_email(&email) {
             Ok(Self(email))
         } else {
-            Err(format!("{} is not a valid email", email))
+            Err(format!("{email} is not a valid email"))
         }
     }
 }

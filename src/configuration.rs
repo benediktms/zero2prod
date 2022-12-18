@@ -5,20 +5,36 @@ use sqlx::{
     ConnectOptions,
 };
 
-#[derive(serde::Deserialize)]
+use crate::domain::SubscriberEmail;
+
+// Apply the changes to DigitalOcean every time configuration gets added
+// doctl apps list --format ID
+// doctl apps update $APP_ID --spec spec.yaml.
+
+#[derive(serde::Deserialize, Clone)]
 pub struct Settings {
     pub database: DatabaseSettings,
     pub application: ApplicationSettings,
+    pub email_client: EmailClientSettings,
 }
 
-#[derive(serde::Deserialize)]
+#[derive(serde::Deserialize, Clone)]
+pub struct EmailClientSettings {
+    pub base_url: String,
+    pub sender_email: String,
+    pub authorization_token: Secret<String>,
+    pub timeout_milliseconds: u64,
+}
+
+#[derive(serde::Deserialize, Clone)]
 pub struct ApplicationSettings {
     #[serde(deserialize_with = "deserialize_number_from_string")]
     pub port: u16,
     pub host: String,
+    pub base_url: String,
 }
 
-#[derive(serde::Deserialize)]
+#[derive(serde::Deserialize, Clone)]
 pub struct DatabaseSettings {
     pub username: String,
     pub password: Secret<String>,
@@ -27,6 +43,16 @@ pub struct DatabaseSettings {
     pub host: String,
     pub database_name: String,
     pub require_ssl: bool,
+}
+
+impl EmailClientSettings {
+    pub fn sender(&self) -> Result<SubscriberEmail, String> {
+        SubscriberEmail::parse(self.sender_email.clone())
+    }
+
+    pub fn timeout(&self) -> std::time::Duration {
+        std::time::Duration::from_millis(self.timeout_milliseconds)
+    }
 }
 
 impl DatabaseSettings {
@@ -66,7 +92,7 @@ pub fn get_config() -> Result<Settings, config::ConfigError> {
     let settings = config::Config::builder()
         .add_source(config::File::from(config_directory.join("base.yaml")))
         .add_source(config::File::from(
-            config_directory.join(&environment_filename),
+            config_directory.join(environment_filename),
         ))
         .add_source(
             // e.g. APP_APPLICATION__PORT=3001 -> Settings.application.port
@@ -101,9 +127,8 @@ impl TryFrom<String> for Environment {
             "development" => Ok(Self::Development),
             "production" => Ok(Self::Production),
             other => Err(format!(
-                "{} is not a supported environment. \
-                User either 'development' or 'production'",
-                other
+                "{other} is not a supported environment. \
+                User either 'development' or 'production'"
             )),
         }
     }
