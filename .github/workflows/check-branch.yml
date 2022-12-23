@@ -16,12 +16,12 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: postgres
+          POSTGRES_PORT: 5433
         ports:
           - 5433:5432
     env:
       SQLX_VERSION: 0.6.2
       SQLX_FEATURES: "rustls,postgres"
-      DB_PORT: 5433
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
