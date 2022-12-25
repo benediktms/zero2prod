@@ -26,10 +26,18 @@ DB_PORT=${POSTGRES_PORT:=5432}
 # Launch postgres using Docker
 
 if [[ -z "${SKIP_DOCKER}" ]]; then
+
+  RUNNING_POSTGRES_CONTAINER=$(docker ps --filter 'name=postgres' --format '{{.ID}}')
+  if [[ -n $RUNNING_POSTGRES_CONTAINER ]]; then
+    echo >&2 "there is a postgres container already running, kill it with"
+    echo >&2 "    docker kill ${RUNNING_POSTGRES_CONTAINER}"
+    exit 1
+  fi
+
   docker run \
-    -e POSTGRES_USER=${DB_USER} \
-    -e POSTGRES_PASSWORD=${DB_PASSWORD} \
-    -e POSTGRES_DB=${DB_NAME} \
+    -e POSTGRES_USER="${DB_USER}" \
+    -e POSTGRES_PASSWORD="${DB_PASSWORD}" \
+    -e POSTGRES_DB="${DB_NAME}" \
     -p "${DB_PORT}":5432 \
     -d postgres \
     postgres -N 1000
