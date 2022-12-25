@@ -107,8 +107,8 @@ pub async fn spawn_app() -> TestApp {
 
     let configuration = {
         let mut c = get_config().expect("Failed to read configuration");
-        c.database.port = 5433;
         c.database.database_name = format!("newsletter-test-{}", Uuid::new_v4());
+        c.database.port = 5433;
         c.application.port = 0;
         c.email_client.base_url = email_server.uri();
 

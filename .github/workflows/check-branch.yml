@@ -16,20 +16,21 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_HOST: localhost
-          POSTGRES_PORT: 5432
+          POSTGRES_PORT: 5433
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
         ports:
-          - 5432:5432
+          - 5433:5433
     env:
       SQLX_VERSION: 0.6.2
       SQLX_FEATURES: "rustls,postgres"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+
       - name: Cache dependencies
         id: cache-dependencies
         uses: actions/cache@v2
@@ -39,20 +40,22 @@ jobs:
             ~/.cargo/git
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
       - name: Install stable toolchain
         uses: actions-rs/toolchain@v1
         with:
           profile: minimal
           toolchain: stable
           override: true
+
       - name: Cache sqlx-cli
         uses: actions/cache@v2
         id: cache-sqlx
         with:
           path: |
             ~/.cargo/bin/sqlx
+            ~/.cargo/bin/cargo-sqlx
           key: ${{ runner.os }}-sqlx-${{ env.SQLX_VERSION }}
-
       - name: Install sqlx-cli
         uses: actions-rs/cargo@v1
         if: steps.cache-sqlx.outputs.cache-hit == false
@@ -65,12 +68,17 @@ jobs:
             --features ${{ env.SQLX_FEATURES }}
             --no-default-features
             --locked
-
       - name: Migrate database
+        env:
+          POSTGRES_PORT: 5433
         run: |
           sudo apt-get install libpq-dev -y
-          SKIP_DOCKER=true PGPASSWORD=postgres ./scripts/init_db.sh
-
+          SKIP_DOCKER=true ./scripts/init_db.sh
+      - name: Check sqlx-data.json is up-to-date
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5433/newsletter
+        run: |
+          cargo sqlx prepare --check -- --bin zero2prod
       - name: Run cargo test
         uses: actions-rs/cargo@v1
         with:
@@ -86,61 +94,24 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_HOST: localhost
-          POSTGRES_PORT: 5432
+          POSTGRES_PORT: 5433
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
         ports:
-          - 5432:5432
+          - 5433:5433
     env:
       SQLX_VERSION: 0.6.2
       SQLX_FEATURES: "rustls,postgres"
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-      - name: Cache dependencies
-        id: cache-dependencies
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-      - name: Install stable toolchain
-        uses: actions-rs/toolchain@v1
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           override: true
           components: rustfmt
-      - name: Cache sqlx-cli
-        uses: actions/cache@v2
-        id: cache-sqlx
-        with:
-          path: |
-            ~/.cargo/bin/sqlx
-          key: ${{ runner.os }}-sqlx-${{ env.SQLX_VERSION }}
-
-      - name: Install sqlx-cli
-        uses: actions-rs/cargo@v1
-        if: steps.cache-sqlx.outputs.cache-hit == false
-        with:
-          command: install
-          args: >
-            sqlx-cli
-            --force
-            --version=${{ env.SQLX_VERSION }}
-            --features ${{ env.SQLX_FEATURES }}
-            --no-default-features
-            --locked
-
-      - name: Migrate database
-        run: |
-          sudo apt-get install libpq-dev -y
-          SKIP_DOCKER=true PGPASSWORD=postgres ./scripts/init_db.sh
-
       - uses: actions-rs/cargo@v1
         with:
           command: fmt
@@ -156,35 +127,28 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_HOST: localhost
-          POSTGRES_PORT: 5432
+          POSTGRES_PORT: 5433
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
         ports:
-          - 5432:5432
+          - 5433:5433
     env:
       SQLX_VERSION: 0.6.2
       SQLX_FEATURES: "rustls,postgres"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Cache dependencies
-        id: cache-dependencies
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
       - name: Install stable toolchain
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-          override: true
           components: clippy
+          override: true
+
       - name: Cache sqlx-cli
         uses: actions/cache@v2
         id: cache-sqlx
@@ -205,11 +169,10 @@ jobs:
             --features ${{ env.SQLX_FEATURES }}
             --no-default-features
             --locked
-
       - name: Migrate database
         run: |
           sudo apt-get install libpq-dev -y
-          SKIP_DOCKER=true PGPASSWORD=postgres ./scripts/init_db.sh
+          SKIP_DOCKER=true ./scripts/init_db.sh
       - name: Run clippy
         uses: actions-rs/clippy-check@v1
         with:
@@ -226,34 +189,27 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_HOST: localhost
-          POSTGRES_PORT: 5432
+          POSTGRES_PORT: 5433
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
         ports:
-          - 5432:5432
+          - 5433:5433
     env:
       SQLX_VERSION: 0.6.2
       SQLX_FEATURES: "rustls,postgres"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Cache dependencies
-        id: cache-dependencies
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
       - name: Install stable toolchain
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           override: true
+
       - name: Cache sqlx-cli
         uses: actions/cache@v2
         id: cache-sqlx
@@ -274,11 +230,10 @@ jobs:
             --features ${{ env.SQLX_FEATURES }}
             --no-default-features
             --locked
-
       - name: Migrate database
         run: |
           sudo apt-get install libpq-dev -y
-          SKIP_DOCKER=true PGPASSWORD=postgres ./scripts/init_db.sh
+          SKIP_DOCKER=true ./scripts/init_db.sh
       - name: Run cargo-tarpaulin
         uses: actions-rs/tarpaulin@v0.1
         with:
