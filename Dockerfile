@@ -7,10 +7,11 @@ COPY . .
 RUN cargo chef prepare --recipe-path recipe.json
 
 FROM chef AS builder
+ENV SQLX_OFFLINE true
 COPY --from=planner /app/recipe.json recipe.json
+COPY sqlx-data.json /app
 RUN cargo chef cook --release --recipe-path recipe.json
 COPY . .
-ENV SQLX_OFFLINE true
 RUN cargo build --release --bin zero2prod
 
 FROM debian:bullseye-slim AS runtime
