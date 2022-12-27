@@ -47,6 +47,24 @@
     },
     "query": "UPDATE subscriptions SET status = 'confirmed' WHERE id = $1"
   },
+  "a9612b3227a739884a8e381b1fae041a0f9729ca2121f14ebe8983f787e0e331": {
+    "describe": {
+      "columns": [
+        {
+          "name": "email",
+          "ordinal": 0,
+          "type_info": "Text"
+        }
+      ],
+      "nullable": [
+        false
+      ],
+      "parameters": {
+        "Left": []
+      }
+    },
+    "query": "\n    SELECT email\n    FROM subscriptions\n    WHERE status = 'confirmed'\n    "
+  },
   "cd27de29ce8437074c9dfe32bbf0098bccb92f03516f8e8b2f7eb631b0532eda": {
     "describe": {
       "columns": [],
