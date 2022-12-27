@@ -27,9 +27,12 @@ jobs:
     env:
       SQLX_VERSION: 0.6.2
       SQLX_FEATURES: "rustls,postgres"
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/newsletter
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+      - name: Create .env file
+        run: touch .env && echo DATABASE_URL=${{ env.DATABASE_URL }} >> .env
       - name: Cache dependencies
         id: cache-dependencies
         uses: actions/cache@v2
