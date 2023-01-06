@@ -5,7 +5,7 @@ use sqlx::{
     ConnectOptions,
 };
 
-use crate::domain::SubscriberEmail;
+use crate::{domain::SubscriberEmail, startup::HmacSecret};
 
 // Apply the changes to DigitalOcean every time configuration gets added
 // doctl apps list --format ID
@@ -32,6 +32,7 @@ pub struct ApplicationSettings {
     pub port: u16,
     pub host: String,
     pub base_url: String,
+    pub hmac_secret: Secret<String>,
 }
 
 #[derive(serde::Deserialize, Clone)]
