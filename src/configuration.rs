@@ -5,7 +5,7 @@ use sqlx::{
     ConnectOptions,
 };
 
-use crate::{domain::SubscriberEmail, startup::HmacSecret};
+use crate::domain::SubscriberEmail;
 
 // Apply the changes to DigitalOcean every time configuration gets added
 // doctl apps list --format ID

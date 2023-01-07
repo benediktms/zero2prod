@@ -13,7 +13,7 @@ path = "src/main.rs"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-actix-web = "4.2.1"
+actix-web = "4.0.0"
 anyhow = "1"
 argon2 = {version = "0.4", features = ["std"]}
 base64 = "0.13"
@@ -23,7 +23,6 @@ hex = "0.4"
 hmac = {version = "0.12", features = ["std"]}
 htmlescape = "0.3"
 rand = {version = "0.8", features = ["std_rng"]}
-reqwest = {version = "0.11", default-features = false, features = ["json", "rustls-tls"]}
 secrecy = {version = "0.8", features = ["serde"]}
 serde = {version = "1", features = ["derive"]}
 serde-aux = "4"
@@ -31,7 +30,7 @@ sha2 = "0.10"
 thiserror = "1"
 tokio = {version = "1.19.2", features = ["macros", "rt-multi-thread"]}
 tracing = {version = '0.1', features = ['log']}
-tracing-actix-web = "0.7.0"
+tracing-actix-web = "0.7.2"
 tracing-bunyan-formatter = "0.3"
 tracing-log = "0.1"
 tracing-subscriber = {version = '0.3', features = ["registry", "env-filter"]}
@@ -52,6 +51,11 @@ features = [
   "offline",
 ]
 version = "0.6.2"
+
+[dependencies.reqwest]
+default-features = false
+features = ["json", "rustls-tls", "cookies"]
+version = "0.11"
 
 [dev-dependencies]
 claim = "0.5"
