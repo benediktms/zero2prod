@@ -16,4 +16,7 @@ pub async fn an_error_flash_message_is_set_on_failure() {
 
     assert_eq!(res.status().as_u16(), 303);
     assert_is_redirect_to(&res, "/login");
+
+    let html_page = app.get_login_html().await;
+    assert!(html_page.contains(r#"<p><i>Authentication failed</i></p>"#));
 }
