@@ -27,7 +27,7 @@ pub async fn admin_dashboard(
 
     let body = format!(
         r#"
-"<!DOCTYPE html>
+<!DOCTYPE html>
     <html lang="en">
         <head>
             <meta http-equiv="content-type" content="text/html; charset=utf-8">
@@ -36,7 +36,7 @@ pub async fn admin_dashboard(
     <body>
         <p>Welcome {username}!</p>
     </body>
-</html>"
+</html>
     "#,
     );
 
