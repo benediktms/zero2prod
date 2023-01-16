@@ -13,9 +13,8 @@ use crate::{
     authentication::{validate_credentails, AuthError, Credentials},
     domain::SubscriberEmail,
     email_client::EmailClient,
+    utils::error_chain_fmt,
 };
-
-use super::error_chain_fmt;
 
 #[derive(Deserialize)]
 pub struct BodyData {

@@ -11,8 +11,8 @@ use sqlx::PgPool;
 
 use crate::{
     authentication::{validate_credentails, AuthError, Credentials},
-    routes::error_chain_fmt,
     session_state::TypedSession,
+    utils::error_chain_fmt,
 };
 #[derive(thiserror::Error)]
 pub enum LoginError {
