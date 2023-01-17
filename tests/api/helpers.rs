@@ -148,6 +148,14 @@ impl TestApp {
     pub async fn get_change_password_html(&self) -> String {
         self.get_change_password().await.text().await.unwrap()
     }
+
+    pub async fn post_logout(&self) {
+        self.api_client
+            .post(&format!("{}/logout", &self.address))
+            .send()
+            .await
+            .expect("Failed to execute request.");
+    }
 }
 
 pub fn assert_is_redirect_to(response: &reqwest::Response, location: &str) {
