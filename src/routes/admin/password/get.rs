@@ -30,7 +30,7 @@ pub async fn change_password_form(
             <title>Change Password</title>
         </head>
         <body>
-        {msg_html}
+            {msg_html}
             <form action="/admin/password" method="post">
                 <label>
                     Current password
