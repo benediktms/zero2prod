@@ -4,9 +4,8 @@ use secrecy::{ExposeSecret, Secret};
 use sqlx::PgPool;
 
 use crate::{
-    authentication::{validate_credentails, AuthError, Credentials},
+    authentication::{validate_credentails, AuthError, Credentials, UserId},
     routes::get_username,
-    session_state::TypedSession,
     utils::{e500, see_other},
 };
 
@@ -19,15 +18,10 @@ pub struct FormData {
 
 pub async fn change_password(
     data: web::Form<FormData>,
-    session: TypedSession,
     pool: web::Data<PgPool>,
+    user_id: web::ReqData<UserId>,
 ) -> Result<HttpResponse, actix_web::Error> {
-    let user_id = session.get_user_id().map_err(e500)?;
-    if user_id.is_none() {
-        return Ok(see_other("/login"));
-    }
-    let user_id = user_id.unwrap();
-
+    let user_id = user_id.into_inner();
     if data.new_password.expose_secret() != data.password_confirmation.expose_secret() {
         FlashMessage::error("Passwords do not match").send();
         return Ok(see_other("/admin/password"));
@@ -42,7 +36,7 @@ pub async fn change_password(
         return Ok(see_other("/admin/password"));
     }
 
-    let username = get_username(user_id, &pool).await.map_err(e500)?;
+    let username = get_username(*user_id, &pool).await.map_err(e500)?;
 
     let credentials = Credentials {
         username,
@@ -59,7 +53,7 @@ pub async fn change_password(
         };
     }
 
-    crate::authentication::change_password(user_id, data.0.new_password, &pool)
+    crate::authentication::change_password(*user_id, data.0.new_password, &pool)
         .await
         .map_err(e500)?;
     FlashMessage::success("Password changed successfully").send();
